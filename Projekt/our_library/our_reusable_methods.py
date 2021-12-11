@@ -1,40 +1,58 @@
-from sklearn.model_selection import cross_validate
-from statistics import mean
+from sklearn.model_selection import validation_curve
 import matplotlib.pyplot as plt
-
-
-def cross_validate_models(models,X_train,y_train,printEveryN,scoring='neg_mean_absolute_error',silent=False):
-    """
-    models - list of preconfigured models.
-    X_train,y_train - models will be fitted on this data.
-    printEveryN - print status every n-models to avoid spam.
-    scoring - what metric to use on each split.
-    """
-    scores = []
-    for idx,clf in enumerate(models):
-        if(idx % printEveryN == 0 and not silent):
-            print(f"{idx}/{len(models)}",end=" ")
-        scores.append(cross_validate(clf, X_train, y_train, cv=5, return_train_score=True, scoring=scoring))
-    train_mean_mae = [mean(abs(s['train_score'])) for s in scores]
-    val_mean_mae = [mean(abs(s['test_score'])) for s in scores]
-    return train_mean_mae,val_mean_mae
+import numpy as np
     
-def plot_train_vs_validation_scores(train_metrics, val_metrics, hiperparameters, titles, hiperparameterName):
+def plot_validation_curve(X,y,param_range,model,param_name,scoring,model_name,cv=5):
     """
-    train_scores,val_scores - metrics to be plotted for easy comparison.
-    hiperparameters - list of crossvalidated hiperparameter values to plot on x.
-    titles - list of str, names for each of 2 graphs.
-    hiperparameterName - name of crossvalidated hiperparameter.
-    Does not matter what the metric actually is. 
+    This function cross_validated training data and plots nice graphs for training 
+    as well as for validation for each hiperparameter. It shows std of scores in each split.
+
+    X,y - data to be fitted on model (training data).
+    model - model to use (without specified hiperparameters).
+    param_range - range of parameters to use (in logarithmic space).
+    param_name - very specific name of hiperparameter (same as field in model's class).
+    scoring - very specific sklearn predefined scoring function name.
+    model_name - just the name of model to show on plot.
+    cv - number of splits in cross-validation. 
     """
-    fig,axes = plt.subplots(1,2)
-    fig.set_figwidth(10)
-    axes[0].plot(hiperparameters,train_metrics, c="red")
-    axes[1].plot(hiperparameters,val_metrics, c="green")
-    axes[0].set_title(titles[0])
-    axes[1].set_title(titles[1])
-    axes[0].set_xlabel(hiperparameterName)
-    axes[1].set_xlabel(hiperparameterName)
-    axes[0].set_ylabel("metric")
-    axes[1].set_ylabel("metric")
-    return fig,axes
+
+    train_scores, validation_scores = validation_curve(
+        model,X,y,
+        param_name=param_name,
+        param_range=param_range,
+        scoring=scoring,
+        cv=cv
+    )
+
+    train_scores_mean = np.mean(train_scores, axis=1)
+    train_scores_std = np.std(train_scores, axis=1)
+    validation_scores_mean = np.mean(validation_scores, axis=1)
+    validation_scores_std = np.std(validation_scores, axis=1)
+
+    plt.title(f"Validation Curve With {model_name}")
+    plt.xlabel(param_name)
+    plt.ylabel("Score")
+
+    lw = 1.5
+    plt.semilogx(
+        param_range, train_scores_mean, 
+        label="Training score", color="darkorange", lw=lw
+    )
+    plt.fill_between(
+        param_range, 
+        train_scores_mean - train_scores_std,
+        train_scores_mean + train_scores_std,
+        alpha=0.1, color="darkorange", lw=lw
+    )
+    plt.semilogx(
+        param_range, validation_scores_mean, 
+        label="Cross-validation score", color="navy", lw=lw
+    )
+    plt.fill_between(
+        param_range,
+        validation_scores_mean - validation_scores_std,
+        validation_scores_mean + validation_scores_std,
+        alpha=0.1, color="navy", lw=lw
+    )
+    plt.legend(loc="best")
+    plt.show()
