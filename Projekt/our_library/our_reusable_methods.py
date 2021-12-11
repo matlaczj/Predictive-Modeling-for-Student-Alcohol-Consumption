@@ -1,6 +1,7 @@
 from sklearn.model_selection import validation_curve
 import matplotlib.pyplot as plt
 import numpy as np
+from sklearn.metrics import mean_absolute_error
     
 def plot_validation_curve(model,model_name,X,y,param_range,param_name,scoring,cv=5,
                           verbose=0,xscale="log",lw = 1.5,opacity=0.5,figsize=(10,5)):
@@ -14,7 +15,8 @@ def plot_validation_curve(model,model_name,X,y,param_range,param_name,scoring,cv
 
     Arguments:
     X,y - data to be fitted on model (training data).
-    model - model to use (without specified hiperparameters).
+    model - model to use, can have some hiperparameter already set. 
+            Only "param_name" parameter will be tested and changed.
     param_range - range of parameters to use (in logarithmic space). Example: np.logspace(-2, 4, 50)
     param_name - very specific name of hiperparameter (same as field in model's class).
     scoring - very specific sklearn predefined scoring function name.
@@ -76,3 +78,11 @@ def plot_validation_curve(model,model_name,X,y,param_range,param_name,scoring,cv
     plt.show()
 
     return train_scores_mean, validation_scores_mean
+
+def test_model(model,X_train,y_train,X_test,y_test):
+    """
+    Very simple helper function with narrow usage.
+    """
+    model.fit(X_train,y_train)
+    y_pred = model.predict(X_test)
+    return mean_absolute_error(y_test,y_pred)
