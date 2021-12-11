@@ -1,7 +1,8 @@
 from sklearn.model_selection import validation_curve
+from sklearn.metrics import mean_absolute_error
 import matplotlib.pyplot as plt
 import numpy as np
-from sklearn.metrics import mean_absolute_error
+import pandas as pd
     
 def plot_validation_curve(model,model_name,X,y,param_range,param_name,scoring,cv=5,
                           verbose=0,xscale="log",lw = 1.5,opacity=0.5,figsize=(10,5)):
@@ -78,6 +79,23 @@ def plot_validation_curve(model,model_name,X,y,param_range,param_name,scoring,cv
     plt.show()
 
     return train_scores_mean, validation_scores_mean
+
+def convert_to_categoricals(y_test,y_pred,n_categories):
+    """
+    The idea is to convert real and predicted labels to categoricals
+    to test the f1 score of a model. 
+    n_categories - should reflect number of natural categories of data,
+    Example: 3 categories -> cold,warm,hot.
+    First and last bin are big to guarantee no NaNs.
+    """
+    mini = min(y_test+y_pred)
+    maxi = max(y_test+y_pred)
+    bins = np.arange(0,1,1/(n_categories+1))
+    bins[0],bins[-1] = mini-1,maxi+1
+    labels = list(range(n_categories))
+    y_pred_cut = list(pd.cut(y_pred, bins=bins, labels=labels))
+    y_test_cut = list(pd.cut(y_test, bins=bins, labels=labels))
+    return y_test_cut,y_pred_cut
 
 def test_model(model,X_train,y_train,X_test,y_test):
     """
