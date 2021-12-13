@@ -63,7 +63,7 @@ def plot_validation_curve(model,model_name,X,y,param_range,param_name,scoring,cv
     )
     ax.plot(
         param_range, validation_scores_mean, 
-        label="Cross-validation score", color="navy", lw=lw,
+        label="Validation score", color="navy", lw=lw,
     )
     ax.fill_between(
         param_range,
@@ -78,7 +78,11 @@ def plot_validation_curve(model,model_name,X,y,param_range,param_name,scoring,cv
     ax.legend(loc="best")
     plt.show()
 
-    return train_scores_mean, validation_scores_mean
+    best_parameter,best_score = sorted(zip(param_range, validation_scores_mean), key=lambda x:x[1])[-1]
+
+    print(f"Best Parameter = {best_parameter} And Best Score = {best_score}")
+
+    return best_parameter, best_score, train_scores_mean, validation_scores_mean
 
 def convert_to_categoricals(y_test,y_pred,n_categories):
     """
