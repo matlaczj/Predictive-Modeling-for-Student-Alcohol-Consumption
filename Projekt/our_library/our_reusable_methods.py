@@ -127,3 +127,18 @@ def save_model(name,parameters,model,error,models_parameters):
         "error" : error
     }
     models_parameters.append(d)
+
+def extend_to_poly_features(X,degree):
+    """
+    Extends features of a dataframe by adding columns
+    with powers of original data. 
+    """
+    X = X.copy()
+    X_out = X.copy()
+    if(degree < 2):
+        return X
+    for i in range(2,degree+1):
+        Xpow = X ** i
+        Xpow.columns = [f"{c}^{i}" for c in X.columns]
+        X_out = pd.concat([X_out.reset_index(),Xpow.reset_index()],axis=1).drop(columns=["index"])
+    return X_out
