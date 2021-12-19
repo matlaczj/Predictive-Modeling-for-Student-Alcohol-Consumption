@@ -104,7 +104,26 @@ def convert_to_categoricals(y_test,y_pred,n_categories):
 def test_model(model,X_train,y_train,X_test,y_test):
     """
     Very simple helper function with narrow usage.
+    ATTENTION! This returns error, not score like previously.
     """
     model.fit(X_train,y_train)
     y_pred = model.predict(X_test)
     return mean_absolute_error(y_test,y_pred)
+
+def save_model(name,parameters,model,error,models_parameters):
+    """
+    Saves hiperparameters, test score and model to 
+    argument lsit "models_parameters".
+    Arguments:
+    name - name of model
+    parameters - ex. {"alpha" : alpha}
+    model - sklearn model object
+    error - test error ex. mae
+    """
+    d = {
+        "name" : name, 
+        "parameters" : parameters, 
+        "model" : model, 
+        "error" : error
+    }
+    models_parameters.append(d)
