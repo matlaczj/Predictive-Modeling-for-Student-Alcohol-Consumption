@@ -94,7 +94,7 @@ def convert_to_categoricals(y_test,y_pred,n_categories):
     """
     mini = min(y_test+y_pred)
     maxi = max(y_test+y_pred)
-    bins = np.arange(0,1,1/(n_categories+1))
+    bins = np.arange(1,2,1/(n_categories+1))
     bins[0],bins[-1] = mini-1,maxi+1
     labels = list(range(n_categories))
     y_pred_cut = list(pd.cut(y_pred, bins=bins, labels=labels))
@@ -107,8 +107,22 @@ def test_model(model,X_train,y_train,X_test,y_test):
     ATTENTION! This returns error, not score like previously.
     """
     model.fit(X_train,y_train)
+
+    y_pred = model.predict(X_train)
+    train_score = MAPE(y_train,y_pred)
+
     y_pred = model.predict(X_test)
-    return mean_absolute_error(y_test,y_pred)
+    score = MAPE(y_test,y_pred)
+    
+    return score,train_score
+
+def MAPE(y_test,y_pred):
+    """
+    Mean Absolute Percentage Error
+    Sklearn does not have this because of division by zero problem.
+    Use only with data above zero.
+    """
+    return sum(abs(-1 * (y_pred/y_test) + 1)) * 100 / len(y_pred)
 
 def save_model(name,parameters,model,error,models_parameters):
     """
