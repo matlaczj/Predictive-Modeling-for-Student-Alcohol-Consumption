@@ -15,6 +15,7 @@ def plot_learning_curve(
     cv=None,
     n_jobs=None,
     train_sizes=np.linspace(0.1, 1.0, 5),
+    scoring = "neg_mean_absolute_error"
 ):
     """
     Generate 3 plots: the test and training learning curve, the training
@@ -92,7 +93,7 @@ def plot_learning_curve(
         n_jobs=n_jobs,
         train_sizes=train_sizes,
         return_times=True,
-        scoring = "neg_mean_absolute_error"
+        scoring = scoring
     )
     train_scores_mean = np.mean(train_scores, axis=1)
     train_scores_std = np.std(train_scores, axis=1)

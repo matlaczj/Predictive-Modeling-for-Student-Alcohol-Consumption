@@ -1,5 +1,6 @@
 from sklearn.model_selection import validation_curve
 from sklearn.metrics import mean_absolute_error
+from sklearn.preprocessing import LabelEncoder
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
@@ -92,16 +93,12 @@ def convert_to_categoricals(y_test,y_pred,n_categories):
     Example: 3 categories -> cold,warm,hot.
     First and last bin are big to guarantee no NaNs.
     """
-    mini = min(y_test+y_pred)
-    maxi = max(y_test+y_pred)
-    bins = np.arange(1,2,1/(n_categories+1))
-    bins[0],bins[-1] = mini-1,maxi+1
-    labels = list(range(n_categories))
-    y_pred_cut = list(pd.cut(y_pred, bins=bins, labels=labels))
-    y_test_cut = list(pd.cut(y_test, bins=bins, labels=labels))
-    return y_test_cut,y_pred_cut
+    le = LabelEncoder()
+    y_pred_cat = le.fit_transform(pd.cut(y_pred,n_categories,retbins=True)[0])
+    y_test_cat = le.fit_transform(pd.cut(y_test,n_categories,retbins=True)[0])
+    return y_test_cat, y_pred_cat
 
-def test_model(model,X_train,y_train,X_test,y_test):
+def test_model(model,X_train,y_train,X_test,y_test,silent=True):
     """
     Very simple helper function with narrow usage.
     ATTENTION! This returns error, not score like previously.
@@ -113,7 +110,8 @@ def test_model(model,X_train,y_train,X_test,y_test):
 
     y_pred = model.predict(X_test)
     score = MAPE(y_test,y_pred)
-    
+    if(not silent):
+        print(f"Test score = {score} and train score = {train_score}")
     return score,train_score
 
 def MAPE(y_test,y_pred):
