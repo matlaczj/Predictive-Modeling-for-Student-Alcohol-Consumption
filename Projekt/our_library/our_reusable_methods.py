@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
     
-def plot_validation_curve(model,model_name,X,y,param_range,param_name,scoring,cv=5,
+def plot_validation_curve(model,model_name,X,y,param_range,param_name,scoring="neg_mean_absolute_error",cv=5,
                           verbose=0,xscale="log",lw = 1.5,opacity=0.5,figsize=(10,5)):
     """
     This function cross_validated training data and plots nice graphs for training 

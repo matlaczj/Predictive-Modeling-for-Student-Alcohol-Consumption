@@ -12,8 +12,8 @@ def plot_learning_curve(
     y,
     axes=None,
     ylim=None,
-    cv=None,
-    n_jobs=None,
+    cv=5,
+    n_jobs=-1,
     train_sizes=np.linspace(0.1, 1.0, 5),
     scoring = "neg_mean_absolute_error"
 ):
