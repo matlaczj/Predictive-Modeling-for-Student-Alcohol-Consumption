@@ -1,6 +1,8 @@
 # Predictive Modeling for Student Alcohol Consumption
 
-<img src="https://th.bing.com/th/id/OIG.W.NmX_.6_GkFeIfsWRHh?pid=ImgGn" width="300" height="300" style="display: block; margin: auto;">
+<p align="center">
+  <img src="predictive-modeling-for-student-alcohol-consumption.png" alt="Logo" width="400"/>
+</p>
 
 ## Project Overview
 
