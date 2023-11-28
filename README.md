@@ -66,9 +66,22 @@ The following regression models were explored:
 
 Performance was evaluated using Mean Absolute Percentage Error (MAPE), providing insight into the accuracy of predictions.
 
+We have 7 categories of the attribute described "alc": <br>
+<ol>
+<li>Almost not at all</li>
+<li>Very little</li>
+<li>Small</li>
+<li>Middling</li>
+<li>Quite a few</li>
+<li>A lot</li>
+<li>Very much</li>
+</ol>
+
+![alt text](conf_matrixes.png "Confusion matrixes of all models.")
+
 ## Best Model
 
-The model with the best performance was selected based on cross-validation results, learning curves, and efficiency.
+The model with the best performance was selected based on cross-validation results, learning curves, and efficiency. The best one was SVR.
 
 ## Conclusions
 
